@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>vcpkg &#x8e29;&#x5751;&#x65e5;&#x8bb0;</title>
+        <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+        
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+        
+    </head>
+    <body class="vscode-body vscode-light">
+        <h1 id="vcpkg-踩坑日记">vcpkg 踩坑日记</h1>
+<h2 id="从源码编译vcpkg">从源码编译vcpkg</h2>
+<p><strong>源码地址：</strong><a href="https://github.com/microsoft/vcpkg">github</a><br>
+频道:</p>
+<ul>
+<li><a href="https://cppalliance.org/slack/">⚙︎ Slack-vcpkg </a></li>
+<li><a href="https://www.includecpp.org/">🌏 Discord</a></li>
+<li><a href="https://learn.microsoft.com/vcpkg">📚︎ 文档</a></li>
+</ul>
+<h2 id="windows上搭建vcpkg包管理环境">Windows上搭建vcpkg包管理环境</h2>
+<ol>
+<li><strong>下载源代码</strong></li>
+</ol>
+<pre><code>&gt; git clone https://github.com/microsoft/vcpkg  
+&gt; .\vcpkg\bootstrap-vcpkg.bat  
+</code></pre>
+<ol start="2">
+<li>
+<p><strong>配置环境变量</strong>
+将vcpckg的安装路径配置到系统环境变量中</p>
+</li>
+<li>
+<p><strong>常用命令</strong></p>
+<table>
+<thead>
+<tr>
+<th>command</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>vcpkg search  <pkg></td>
+<td>搜索</td>
+</tr>
+<tr>
+<td>vcpkg install <pkg></td>
+<td>安装</td>
+</tr>
+<tr>
+<td>vcpkg remove  <pkg></td>
+<td>卸载</td>
+</tr>
+<tr>
+<td>vcpkg remove --outdated</td>
+<td>卸载所有过时的包。</td>
+</tr>
+<tr>
+<td>vcpkg update</td>
+<td>列出可以更新的包。</td>
+</tr>
+<tr>
+<td>vcpkg upgrade</td>
+<td>重建所有过时的包。</td>
+</tr>
+<tr>
+<td>vcpkg list</td>
+<td>列出已安装的包</td>
+</tr>
+<tr>
+<td>vcpkg integrate install</td>
+<td>使已安装的软件包在用户范围内可用。 需要管理员首次使用特权。</td>
+</tr>
+<tr>
+<td>vcpkg integrate remove</td>
+<td>删除用户范围的集成。</td>
+</tr>
+<tr>
+<td>vcpkg integrate project</td>
+<td>为单个 VS 项目生成引用 NuGet 包使用。</td>
+</tr>
+<tr>
+<td>vcpkg integrate powershell</td>
+<td>启用 PowerShell 选项卡完成。</td>
+</tr>
+<tr>
+<td>vcpkg export <pkg>... [opt]...</td>
+<td>导出包。</td>
+</tr>
+<tr>
+<td>vcpkg version</td>
+<td>通过特定算法对文件进行哈希处理，默认为 SHA512</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>碎碎念<br>
+老生常谈的网络问题，解决办法：科学上网/提前下载安装包/镜像加速</p>
+</li>
+<li>
+<p>经典模式</p>
+<ul>
+<li><strong>查找</strong></li>
+</ul>
+<pre><code>     vcpkg search sqlite3  
+     //若需要指定x86/x64
+     vcpkg search sqlite3：
+</code></pre>
+<ul>
+<li><strong>安装</strong></li>
+</ul>
+<pre><code>     vcpkg install sqlite3
+     //指定某种架构（x86/x64...） 
+     vcpkg install sqlite3:x64-windows 
+</code></pre>
+<ul>
+<li><strong>检查是否安装成功</strong></li>
+</ul>
+<pre><code>     vcpkg list
+</code></pre>
+<p>可选参数(常用)：</p>
+<table>
+<thead>
+<tr>
+<th>command</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>--only-downloads</td>
+<td>只下载资源包但是不构建</td>
+</tr>
+<tr>
+<td>--recurse</td>
+<td>允许在安装过程中删除软件包</td>
+</tr>
+<tr>
+<td>--clean-after-build</td>
+<td>在每一个库构建完成后清理buildtrees下库的源文件, packages 和 downloads 下的库相关的文件(比较大的库一定要记得清理,之前磁盘就被爆破了，泪目)</td>
+</tr>
+<tr>
+<td>--downloads-root=<path></td>
+<td>指定downloads-root的路径，默认.\vcpkg\downloads</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>集成到开发环境</strong>(首次使用请开启管理员模式)</li>
+</ul>
+<pre><code>//全局
+vcpkg integrate install
+//移除
+vcpkg integrate remove
+//指定工程
+vcpkg integrate [project]
+</code></pre>
+</li>
+<li>
+<p><strong>集成到CMake</strong>
+<code> cmake -B build -S -DCMAKE_TOOLCHAIN_FILE=&lt;vcpkg_dir&gt;/scripts/buildsystems/vcpkg.cmake</code></p>
+</li>
+<li>
+<p><strong>手动将自己的本地库集成到vckpg</strong><br>
+(todo...)</p>
+</li>
+</ol>
+<p>如有疑问：<br>
+<a href="https://github.com/huaqfantasy/Maple_NOTE/issues">🏳 <strong>issue</strong></a><br>
+📩 邮箱: <code>hjf734628@gmail.com</code></p>
+
+        
+        
+    </body>
+    </html>

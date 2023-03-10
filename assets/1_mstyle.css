@@ -7,43 +7,55 @@ body {
 }
 
 /*头部*/
-header {
-    background-color: #333;
-    color: #fff;
-    padding: 20px; 
-}
-
-.header-logo {
-    font-size: 2rem;
+.header {
+    background-color: rgba(0, 0, 0, 0.7); /* 半透明黑色背景 */
+    height: 80px; /* 根据需要修改高度 */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 999; /* 置于最上层 */
+  }
+  
+  .header h1 {
+    color: white;
+    font-size: 36px;
     font-weight: bold;
-    text-transform: uppercase;
-}
-
-.header-nav {
-    display: flex;
-    justify-content: center; /* 将子元素水平居中对齐 */
-    align-items: center;
-}
-
-
-.header-nav ul {
-    display: flex;
+    margin: 0;
+    padding: 20px; /* 根据需要调整内边距 */
+  }
+  
+  .header nav {
+    display: inline-block;
+    float: right;
+    margin-top: 30px;
+  }
+  
+  .header nav ul {
     list-style: none;
     margin: 0;
     padding: 0;
-}
-
-.header-nav li {
-    margin: 0 10px;
-    text-decoration: none; /* 去除链接下划线 */
-}
-
-.header-nav a {
-    color: #fff;
+  }
+  
+  .header nav ul li {
+    display: inline-block;
+  }
+  
+  .header nav ul li a {
+    color: white;
+    font-size: 20px;
     text-decoration: none;
-    font-weight: bold;
-   
-}
+    margin-left: 20px;
+    padding: 10px; /* 根据需要调整内边距 */
+    transition: all 0.3s ease;
+  }
+  
+  .header nav ul li a:hover {
+    background-color: white;
+    color: black;
+    border-radius: 5px;
+  }
+  
 
 /*头部--end*/
 
