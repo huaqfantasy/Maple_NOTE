@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>&#x9002;&#x7528;&#x4e8e; &period;NET &#x7684; C&plus;&plus;&sol;CLI</title>
+        <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+        
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+        
+    </head>
+    <body class="vscode-body vscode-light">
+        <h1 id="适用于-net-的-ccli">适用于 .NET 的 C++/CLI</h1>
+<p>ps: 今日无事，开坑！</p>
+<h1 id="环境配置及结构介绍">环境配置及结构介绍</h1>
+<ol>
+<li>安装安装 C++/CLI 支持：打开vs installer 选择安装</li>
+<li>创建CLR 控制台应用程序(CLR 控制台应用(.NET Framework))</li>
+<li>项目结构(源文件、头文件、资源文件)</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>源文件</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ConsoleApplicationName.cpp</td>
+<td>应用的主要源文件和入口点。 此文件具有为项目指定的基名称。 它标识项目 DLL 文件和项目命名空间。 在此文件中提供你自己的代码</td>
+</tr>
+<tr>
+<td>AssemblyInfo.cpp</td>
+<td>包含可用于修改项目程序集元数据的属性和设置。</td>
+</tr>
+<tr>
+<td>pch.cpp</td>
+<td>用于生成名为 ConsoleApplicationName.pch 的预编译标头文件和名为 pch.obj 的预编译类型文件</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>头文件</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>pch.h</td>
+<td>用于生成名为 ConsoleApplicationName.pch 的预编译标头文件和名为 pch.obj 的预编译类型文件。</td>
+</tr>
+<tr>
+<td>Resource.h</td>
+<td>为 app.rc 生成的包含文件</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>资源文件</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>app.rc</td>
+<td>程序的资源脚本文件</td>
+</tr>
+<tr>
+<td>app.ico</td>
+<td>程序的图标文件</td>
+</tr>
+</tbody>
+</table>
+<h2 id="示例程序">示例程序</h2>
+<pre><code>#include &quot;pch.h&quot;
+
+using namespace System;
+
+ref struct City {
+private:
+    Int16 zip_;
+
+public:
+    City(int zip) : zip_(zip) {};
+    property Int16 zip {
+        Int16 get(void) {
+            return zip_;
+        }   // get
+    }   // property
+};
+
+void passByRef(City^% myCity) {
+    // cast required so this pointer in City struct is &quot;const City&quot;
+    if (myCity-&gt;zip == 20100)
+        Console::WriteLine(&quot;zip == 20100&quot;);
+    else
+        Console::WriteLine(&quot;zip != 20100&quot;);
+}
+
+ref class G {
+public:
+    int i;
+};
+
+void Test(int% i) {
+    i++;
+}
+
+int main(array&lt;System::String ^&gt; ^args)
+{
+    G^ g1 = gcnew G;
+    G^% g2 = g1;
+    g1-&gt;i = 12;
+
+    Test(g2-&gt;i);   // g2-&gt;i will be changed in Test2()
+
+    City^ Milano = gcnew City(20100);
+    passByRef(Milano);
+    return 0;
+}
+</code></pre>
+<h2 id="基础数据类型">基础数据类型</h2>
+<ul>
+<li>
+<p>bool：布尔类型，可以存储 true 或 false。</p>
+</li>
+<li>
+<p>char：用于存储单个字符的类型。</p>
+</li>
+<li>
+<p>wchar_t：用于存储宽字符（Unicode）的类型。</p>
+</li>
+<li>
+<p>unsigned char：无符号字符类型。</p>
+</li>
+<li>
+<p>short：短整型，通常占用 2 个字节。</p>
+</li>
+<li>
+<p>unsigned short：无符号短整型，占用 2 个字节。</p>
+</li>
+<li>
+<p>int：整型，通常占用 4 个字节。</p>
+</li>
+<li>
+<p>unsigned int：无符号整型，占用 4 个字节。</p>
+</li>
+<li>
+<p>long long：长整型，通常占用 8 个字节。</p>
+</li>
+<li>
+<p>unsigned long long：无符号长整型，占用 8 个字节。</p>
+</li>
+<li>
+<p>float：单精度浮点数，占用 4 个字节。</p>
+</li>
+<li>
+<p>double：双精度浮点数，占用 8 个字节。</p>
+</li>
+<li>
+<p>Decimal：高精度小数类型，占用 16 个字节。</p>
+</li>
+<li>
+<p>IntPtr：指针类型，用于存储指针或句柄。</p>
+</li>
+<li>
+<p>UIntPtr：无符号指针类型，用于存储指针或句柄的无符号表示<br>
+<code>C++/CLI 中的基本数据类型可以通过带有“^”后缀的托管指针来表示，以区别于非托管的 C++ 数据类型。例如，int 的托管指针类型为“int^”;用&quot;%&quot;定义引用</code></p>
+</li>
+</ul>
+<h2 id="ccli中的指针引用托管指针">c++/cli中的指针,引用,托管指针</h2>
+<p>ok,上代码<br>
+<strong>Swap</strong>：我来~~~</p>
+<pre><code>//指针
+void swap(int* a, int* b)
+{
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+//引用
+void swap_1(int% a, int% b)
+{
+    int temp = a;
+    a = b;
+    b = temp;
+}
+//托管指针
+void swap_2(int^ a, int^ b)
+{
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+
+int main()
+{
+    int x = 10, y = 20;
+    Console::WriteLine(&quot;befor: a:{0:D} b:{1:D}&quot;, a, b);
+    swap(&amp;a,&amp;b);
+    Console::WriteLine(&quot;after: a:{0:D} b:{1:D}&quot;,a,b);
+    return 0;
+}
+</code></pre>
+<p>**指针（pointer）**是一个变量，它存储另一个变量的地址。使用指针可以直接访问存储在这个地址上的变量的值。指针可以通过运算符来进行解引用、取地址、加法、减法等操作。指针可以指向任何类型的变量，包括托管类型和非托管类型。</p>
+<p>**托管指针（managed pointer）**是一个特殊的指针，它由 CLR（公共语言运行时）进行管理。托管指针只能指向托管类型的变量（如 <code>String</code>、<code>array</code>、<code>class</code>、<code>interface</code> 等）。使用托管指针需要在类型前加上符号 ^，例如：<code>int^</code>、<code>String^</code>、<code>array&lt;int&gt;^</code> 等。与指针不同，托管指针不能进行指针算术运算，但可以使用 <code>gcnew</code> 运算符进行动态内存分配和释放。</p>
+<p>**引用（reference）**是另一个变量的别名。它可以被看作是指针的一种特殊形式，它不能被重新赋值指向另一个变量。使用引用可以像访问变量一样直接访问另一个变量的值，而无需进行解引用运算符（*）。引用只能引用已经存在的变量，不能引用空值（null）。</p>
+<h3 id="emm托管指针好家伙来看看具体怎么用">emm，托管指针，好家伙，来看看具体怎么用</h3>
+<pre><code>using namespace System;
+
+int main()
+{
+    // 定义一个托管整数类型的变量，并将其初始化为 42
+    int^ x = gcnew int(42);
+
+    // 使用托管指针访问 x 的值
+    Console::WriteLine(&quot;x = {0}&quot;, *x);
+
+    // 使用托管指针修改 x 的值
+    *x = 99;
+    Console::WriteLine(&quot;x = {0}&quot;, *x);
+
+    // 释放托管指针所指向的内存
+    delete x;
+
+    return 0;
+}
+</code></pre>
+<p>总结：表面上看起来和new差不多，只是使用时变成了<code>gcnew</code>和<code>delete</code>,解指针的时候还是<code>*</code></p>
+<p>以上~~~</p>
+
+        
+        
+    </body>
+    </html>
